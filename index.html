@@ -2,33 +2,113 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Self Introduction</title>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
+    <!-- 添加Font Awesome图标库（仅用于主题切换图标） -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <div class="container">
-        <img src="https://bybing.oss-cn-beijing.aliyuncs.com/avatar/da849704-999c-4d7c-991f-b977aa6c0334.jpg" alt="Avatar" class="avatar"> <!-- Replace with your avatar link -->
-        <h1>About</h1>
-        <!-- <h2>@jhonny22</h2> -->
-        <p>
-            Hi! My name is Jhonny1, passionate about programming and artificial intelligence. I love reading and traveling. I look forward to exploring more unknown fields!
-        </p>
-        <p>
-            Currently working at a tech company, eager to share and learn new knowledge.
-        </p>
-        <h2>My Skills</h2>
-        <ul>
-            <li>JavaScript</li>
-            <li>Python</li>
-            <li>Data Analysis</li>
-            <li>...and more!</li>
-        </ul>
-        <h2>Contact Me</h2>
-        <p>
-            <a href="mailto:jhonny22@163.com">📧 Email</a> | <a href="https://github.com/8ybing">🐙 GitHub</a> | <a href="https://linkedin.com/in/johndoe">🔗 LinkedIn</a>
-        </p>
+        <!-- <img src="https://bybing.oss-cn-beijing.aliyuncs.com/avatar/da849704-999c-4d7c-991f-b977aa6c0334.jpg" alt="Avatar" class="avatar"> -->
+        <div class="content">
+            <h1>About</h1>
+            <p>
+                Hi! My name is Bing Bai,and English name is Jhonny.I mainly focus on DevOps and programming in my work and very passionate about artificial intelligence.    
+            </p>
+            <p>
+                In my spare time,I enjoy listening to music, watching movies and researching new technologies and am willing to share and communicate.
+                I look forward to exploring more unknown fields!
+            </p>
+            <p>
+                My main skill stack is Linux,Kubernetes,Java and Python.Also involved in some other skill areas, such as JavaScript and Database
+            </p>
+            <p>
+                Feel free to contact me via
+                <a href="mailto:jhonny22@163.com">Email</a> or
+                <a href="https://t.me/bybing2">Telegram.</a>
+            </p>
+        </div>
     </div>
+    <div class="copyright">
+        © 2025 Jhonny
+    </div>
+    <!-- 主题切换按钮 -->
+    <div class="theme-toggle" id="themeToggle">
+        <i class="fas fa-sun" id="sunIcon" style="display: none;"></i>
+        <i class="fas fa-moon" id="moonIcon"></i>
+    </div>
+
+    <script>
+        // 获取DOM元素
+        const body = document.body;
+        const themeToggle = document.getElementById('themeToggle');
+        const sunIcon = document.getElementById('sunIcon');
+        const moonIcon = document.getElementById('moonIcon');
+        
+        // 检查本地存储中的主题设置
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark') {
+            enableDarkMode();
+        }
+        
+        // 主题切换函数
+        function toggleTheme() {
+            if (body.classList.contains('dark-mode')) {
+                disableDarkMode();
+            } else {
+                enableDarkMode();
+            }
+        }
+        
+        // 启用夜间模式
+        function enableDarkMode() {
+            body.classList.add('dark-mode');
+            moonIcon.style.display = 'none';
+            sunIcon.style.display = 'block';
+            localStorage.setItem('theme', 'dark');
+        }
+        
+        // 禁用夜间模式
+        function disableDarkMode() {
+            body.classList.remove('dark-mode');
+            sunIcon.style.display = 'none';
+            moonIcon.style.display = 'block';
+            localStorage.setItem('theme', 'light');
+        }
+        
+        // 切换按钮点击事件
+        themeToggle.addEventListener('click', toggleTheme);
+        
+        // 根据时间自动切换主题
+        function autoSwitchTheme() {
+            // 创建上海时区的日期对象
+            const options = { timeZone: 'Asia/Shanghai' };
+            const shanghaiTime = new Date().toLocaleString('en-US', options);
+            const shanghaiDate = new Date(shanghaiTime);
+            
+            const hours = shanghaiDate.getHours();
+            
+            // 晚上7点到早上7点使用夜间模式
+            if (hours >= 19 || hours < 7) {
+                if (!body.classList.contains('dark-mode')) {
+                    enableDarkMode();
+                }
+            } else {
+                if (body.classList.contains('dark-mode')) {
+                    disableDarkMode();
+                }
+            }
+        }
+        
+        // 页面加载时检查时间
+        autoSwitchTheme();
+        
+        // 如果用户未手动设置过主题，每小时检查一次时间
+        if (!localStorage.getItem('userSetTheme')) {
+            setInterval(autoSwitchTheme, 3600000); // 每小时检查一次
+        }
+    </script>
 </body>
 </html>
