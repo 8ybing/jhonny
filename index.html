@@ -6,8 +6,47 @@
     <title>Self Introduction</title>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
-    <!-- 添加Font Awesome图标库（仅用于主题切换图标） -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 替换为国内CDN -->
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- 备用图标样式，以防CDN不可用 -->
+    <style>
+        /* 备用图标 */
+        .icon-sun {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            background: radial-gradient(circle, transparent 40%, currentColor 40%);
+        }
+        .icon-sun:before {
+            content: "";
+            display: block;
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(currentColor, currentColor) center center/2px 18px no-repeat,
+                        linear-gradient(currentColor, currentColor) center center/18px 2px no-repeat,
+                        linear-gradient(45deg, transparent 43%, currentColor 43%, currentColor 57%, transparent 57%) center center/18px 18px no-repeat,
+                        linear-gradient(-45deg, transparent 43%, currentColor 43%, currentColor 57%, transparent 57%) center center/18px 18px no-repeat;
+        }
+        
+        .icon-moon {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: linear-gradient(-45deg, currentColor 20%, transparent 20% 80%, currentColor 80%),
+                        linear-gradient(45deg, currentColor 20%, transparent 20% 80%, currentColor 80%);
+        }
+        
+        /* 用于检测Font Awesome是否加载 */
+        .fa-detection {
+            font-family: "Font Awesome 6 Free", fantasy;
+            visibility: hidden;
+            position: absolute;
+            height: 0;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -34,10 +73,17 @@
     <div class="copyright">
         © 2025 Jhonny
     </div>
+    
+    <!-- Font Awesome 检测元素 -->
+    <div class="fa-detection">&#xf185;</div>
+    
     <!-- 主题切换按钮 -->
     <div class="theme-toggle" id="themeToggle">
         <i class="fas fa-sun" id="sunIcon" style="display: none;"></i>
         <i class="fas fa-moon" id="moonIcon"></i>
+        <!-- 备用图标，默认隐藏 -->
+        <span class="icon-sun" id="backupSunIcon" style="display: none;"></span>
+        <span class="icon-moon" id="backupMoonIcon" style="display: none;"></span>
     </div>
 
     <script>
@@ -46,6 +92,30 @@
         const themeToggle = document.getElementById('themeToggle');
         const sunIcon = document.getElementById('sunIcon');
         const moonIcon = document.getElementById('moonIcon');
+        const backupSunIcon = document.getElementById('backupSunIcon');
+        const backupMoonIcon = document.getElementById('backupMoonIcon');
+        
+        // 检测Font Awesome是否加载成功
+        function detectFontAwesome() {
+            const faDetection = document.querySelector('.fa-detection');
+            const computed = window.getComputedStyle(faDetection);
+            const isFontAwesomeLoaded = !!computed.fontFamily.match(/fontawesome|awesome/i);
+            
+            if (!isFontAwesomeLoaded) {
+                // 如果Font Awesome未加载，使用备用图标
+                sunIcon.style.display = 'none';
+                moonIcon.style.display = 'none';
+                
+                if (body.classList.contains('dark-mode')) {
+                    backupSunIcon.style.display = 'block';
+                } else {
+                    backupMoonIcon.style.display = 'block';
+                }
+            }
+        }
+        
+        // 页面加载后检测Font Awesome
+        window.addEventListener('load', detectFontAwesome);
         
         // 检查本地存储中的主题设置
         const savedTheme = localStorage.getItem('theme');
@@ -65,33 +135,45 @@
         // 启用夜间模式
         function enableDarkMode() {
             body.classList.add('dark-mode');
+            
+            // 处理正常图标
             moonIcon.style.display = 'none';
             sunIcon.style.display = 'block';
+            
+            // 处理备用图标
+            backupMoonIcon.style.display = 'none';
+            backupSunIcon.style.display = 'block';
+            
             localStorage.setItem('theme', 'dark');
         }
         
         // 禁用夜间模式
         function disableDarkMode() {
             body.classList.remove('dark-mode');
+            
+            // 处理正常图标
             sunIcon.style.display = 'none';
             moonIcon.style.display = 'block';
+            
+            // 处理备用图标
+            backupSunIcon.style.display = 'none';
+            backupMoonIcon.style.display = 'block';
+            
             localStorage.setItem('theme', 'light');
         }
         
         // 切换按钮点击事件
         themeToggle.addEventListener('click', toggleTheme);
         
-        // 根据时间自动切换主题
+        // 根据时间自动切换主题（修复时区问题）
         function autoSwitchTheme() {
-            // 创建上海时区的日期对象
-            const options = { timeZone: 'Asia/Shanghai' };
-            const shanghaiTime = new Date().toLocaleString('en-US', options);
-            const shanghaiDate = new Date(shanghaiTime);
-            
-            const hours = shanghaiDate.getHours();
+            // 获取当前时间并转换为上海时间（UTC+8）
+            const now = new Date();
+            const utcHours = now.getUTCHours();
+            const shanghaiHours = (utcHours + 8) % 24; // 上海是UTC+8时区
             
             // 晚上7点到早上7点使用夜间模式
-            if (hours >= 19 || hours < 7) {
+            if (shanghaiHours >= 19 || shanghaiHours < 7) {
                 if (!body.classList.contains('dark-mode')) {
                     enableDarkMode();
                 }
@@ -109,6 +191,11 @@
         if (!localStorage.getItem('userSetTheme')) {
             setInterval(autoSwitchTheme, 3600000); // 每小时检查一次
         }
+        
+        // 添加用户手动切换标记
+        themeToggle.addEventListener('click', function() {
+            localStorage.setItem('userSetTheme', 'true');
+        });
     </script>
 </body>
 </html>

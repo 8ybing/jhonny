@@ -139,7 +139,7 @@ body.dark-mode .contact-links {
     font-size: 0.75rem;
     text-align: left;
     padding-left: 20px;
-    background-color: inherit;
+    background-color: #fff; /* 明确指定背景色而不是继承 */
     box-sizing: border-box; /* 确保padding不会增加宽度 */
     transition: background-color 0.3s ease;
 }
@@ -159,6 +159,15 @@ body.dark-mode .copyright {
     z-index: 100;
     color: #aaaaaa;
     transition: transform 0.3s ease;
+    /* 确保图标可见 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+}
+
+.theme-toggle i {
+    font-size: 18px;
 }
 
 .theme-toggle:hover {
