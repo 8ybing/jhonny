@@ -159,19 +159,17 @@ body.dark-mode .copyright {
     z-index: 100;
     color: #aaaaaa;
     transition: transform 0.3s ease;
-    /* 确保图标可见 */
     display: flex;
     align-items: center;
     justify-content: center;
-    background: transparent;
-}
-
-.theme-toggle i {
-    font-size: 18px;
 }
 
 .theme-toggle:hover {
     transform: scale(1.1);
+}
+
+.theme-toggle i {
+    font-size: 18px;
 }
 
 /* 移动端适配 */
